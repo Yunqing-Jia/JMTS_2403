@@ -1,2 +1,3 @@
-# JMOL_2301_240304C1
+# JMTS_2403A | Linear Programming Solver based on Simplex Method
+ 
  Simplex Method in Python Without Imports
