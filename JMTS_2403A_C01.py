@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
+from tkinter import messagebox, PhotoImage
 
 def simplex(ind,c, A, b):
     m, n = len(A), len(A[0])
@@ -76,7 +76,7 @@ def on_define():
         n = int(entry_n.get())
         m = int(entry_m.get())
     except ValueError:
-        messagebox.showerror("Invalid Input", "Please enter valid integers for n and m.")
+        messagebox.showerror("Invalid Input", "Please enter valid integers for number of variables and constraints.")
         return
 
 
@@ -141,11 +141,16 @@ def on_define():
         if j < n - 1:
             tk.Label(bounds_frame, text="|").grid(row=0, column=5 * j + 3)
 
-    # Solve button (bottom right of constraints section)
-    solve_frame = tk.Frame(input_frame)
-    solve_frame.pack(fill='x', pady=10)
-    solve_btn = tk.Button(solve_frame, text="Solve", command=solve)
-    solve_btn.pack(side='right', padx=10)
+    middle_frame = tk.Frame(root)
+    middle_frame.pack(side='bottom', fill='x', pady=10, padx=10)
+
+    img = PhotoImage(file='J-MTS.png')
+    img_label = tk.Label(middle_frame, image=img)
+    img_label.image = img
+    img_label.pack(side='left')
+
+    solve_button = tk.Button(middle_frame, width=8, height=2, text="Solve", command=solve)
+    solve_button.pack(side='right')
 
 def solve():
     global result_frame, result_text
@@ -217,7 +222,7 @@ def solve():
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
-define_button = tk.Button(top_frame, text="Define", command=on_define)
+define_button = tk.Button(top_frame, text="Define", command=on_define, width=5, height=1,bg="cyan")
 define_button.grid(row=0, column=6, padx=10)
 
 separator = ttk.Separator(root, orient='horizontal')
