@@ -29,7 +29,15 @@ def simplex(ind,c, A, b):
     for i in range(len(basic_vari_index)):
         solution[basic_vari_index[i]] = b_final[i]
 
-    return solution[1:n + 1], ind*tableau[-1][-1]
+    x_result=solution[1:n + 1]
+    y_result=ind*tableau[-1][-1]
+
+    for i in range(m):
+        lhs = sum(A[i][j] * x_result[j] for j in range(n))
+        if lhs - b[i] > 1e-8:
+            return None, None
+
+    return x_result, y_result
 
 root = tk.Tk()
 root.title("Linear Programming Solver (Simplex Method)")
