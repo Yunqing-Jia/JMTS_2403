@@ -9,7 +9,7 @@ This project provides two implementations of the simplex method for solving line
 - **simplex.py**: Simplex method in python without imports
 - **JMTS_2403A_C01.py**: A GUI application with interactive problem definition
 
-## Features
+## ✨ Features
 
 ### Core Functionality
 - Solves linear programming problems in standard form handling both maximization and minimization problems
@@ -31,7 +31,7 @@ No external dependencies required for the core simplex implementation. For the G
 python --version  # Ensure Python 3.x is installed
 ```
 
-## Usage
+## 🔐 Usage
 
 ### Command Line Version (simplex.py)
 
@@ -108,7 +108,7 @@ lⱼ ≤ xⱼ ≤ uⱼ for j = 1, 2, ..., n
 - **Feasibility Checking**: Validates solution against original constraints
 - **Unbounded Detection**: Identifies problems with no finite optimum
 
-## File Structure
+## 📂 Repository Structure
 
 ```
 ├── simplex.py              # Core simplex implementation
@@ -144,8 +144,6 @@ The GUI provides a final results display including:
 
 This project is motivated as-is primarily for self-learning purposes, which is an exercise of the simplex method and optimization solver GUI. 
 Subsequent improvements, bug fixes, or additional features are expected.
-
-## License
 
 ## 📄 License
 
