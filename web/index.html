@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Programming Solver - JMTS_2403 | Yunqing Jia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .setup-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+
+        .setup-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            white-space: nowrap;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #495057;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4facfe;
+        }
+
+        .objective-section, .constraints-section, .bounds-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .objective-row, .constraint-row, .bounds-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .variable-input {
+            width: 80px;
+        }
+
+        /* Remove spinner arrows from variable input fields only */
+        .variable-input::-webkit-outer-spin-button,
+        .variable-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .variable-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .variable-label {
+            font-weight: 500;
+            color: #6c757d;
+            margin: 0 5px;
+        }
+
+        .separator {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4facfe, transparent);
+            margin: 30px 0;
+        }
+
+        .result-section {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .result-content {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid #28a745;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin-top: 15px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .setup-row, .objective-row, .constraint-row, .bounds-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Linear Programming Solver via Simplex Method</h1>
+            <p>JMTS_2403 | <a href="https://github.com/Yunqing-Jia">Yunqing Jia</a> </p>
+        </div>
+
+        <div class="main-content">
+            <!-- Setup Section -->
+            <div class="setup-section">
+                <h2 class="section-title">Problem Setup</h2>
+                <div class="setup-row">
+                    <div class="form-group">
+                        <label for="objective">Objective:</label>
+                        <select id="objective">
+                            <option value="max">Maximize</option>
+                            <option value="min">Minimize</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="numVars">Variables (n):</label>
+                        <input type="number" id="numVars" min="1" max="10" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="numConstraints">Constraints (m):</label>
+                        <input type="number" id="numConstraints" min="1" max="10" value="3">
+                    </div>
+                    <button class="btn btn-primary" onclick="generateInputs()">Define Problem</button>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section" id="inputSection">
+                <!-- Objective Function -->
+                <div class="objective-section">
+                    <h3 class="section-title">Objective Function</h3>
+                    <div id="objectiveInputs"></div>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Constraints -->
+                <div class="constraints-section">
+                    <h3 class="section-title">Constraints</h3>
+                    <div id="constraintInputs"></div>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Variable Bounds -->
+                <div class="bounds-section">
+                    <h3 class="section-title">Variable Bounds</h3>
+                    <div id="boundsInputs"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-success" onclick="solveProblem()">Solve Linear Program</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="result-section" id="resultSection">
+                <h2 class="section-title">Solution Results</h2>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+
+            <!-- Logo Section -->
+            <div style="text-align: center; margin-top: 20px; padding: 20px;">
+                <img src="../J-MTS.png" alt="JMTS Logo" style="max-width: 200px; height: auto; opacity: 0.8;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let numVars = 2;
+        let numConstraints = 3;
+
+        function generateInputs() {
+            numVars = parseInt(document.getElementById('numVars').value);
+            numConstraints = parseInt(document.getElementById('numConstraints').value);
+
+            if (numVars < 1 || numVars > 10 || numConstraints < 1 || numConstraints > 10) {
+                alert('Please enter valid numbers (1-10) for variables and constraints.');
+                return;
+            }
+
+            generateObjectiveInputs();
+            generateConstraintInputs();
+            generateBoundsInputs();
+
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+        }
+
+        function generateObjectiveInputs() {
+            const container = document.getElementById('objectiveInputs');
+            container.innerHTML = '';
+
+            const row = document.createElement('div');
+            row.className = 'objective-row';
+
+            for (let i = 0; i < numVars; i++) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.step = 'any';
+                input.className = 'variable-input';
+                input.id = `obj_${i}`;
+                input.value = '0';
+                row.appendChild(input);
+
+                const label = document.createElement('span');
+                label.className = 'variable-label';
+                label.textContent = `x${i + 1}`;
+                row.appendChild(label);
+
+                if (i < numVars - 1) {
+                    const plus = document.createElement('span');
+                    plus.textContent = ' + ';
+                    row.appendChild(plus);
+                }
+            }
+
+            container.appendChild(row);
+        }
+
+        function generateConstraintInputs() {
+            const container = document.getElementById('constraintInputs');
+            container.innerHTML = '';
+
+            for (let i = 0; i < numConstraints; i++) {
+                const row = document.createElement('div');
+                row.className = 'constraint-row';
+
+                for (let j = 0; j < numVars; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.className = 'variable-input';
+                    input.id = `con_${i}_${j}`;
+                    input.value = '0';
+                    row.appendChild(input);
+
+                    const label = document.createElement('span');
+                    label.className = 'variable-label';
+                    label.textContent = `x${j + 1}`;
+                    row.appendChild(label);
+
+                    if (j < numVars - 1) {
+                        const plus = document.createElement('span');
+                        plus.textContent = ' + ';
+                        row.appendChild(plus);
+                    }
+                }
+
+                const leq = document.createElement('span');
+                leq.textContent = ' ≤ ';
+                row.appendChild(leq);
+
+                const rhsInput = document.createElement('input');
+                rhsInput.type = 'number';
+                rhsInput.step = 'any';
+                rhsInput.className = 'variable-input';
+                rhsInput.id = `rhs_${i}`;
+                rhsInput.value = '0';
+                row.appendChild(rhsInput);
+
+                container.appendChild(row);
+            }
+        }
+
+        function generateBoundsInputs() {
+            const container = document.getElementById('boundsInputs');
+            container.innerHTML = '';
+
+            const row = document.createElement('div');
+            row.className = 'bounds-row';
+
+            for (let i = 0; i < numVars; i++) {
+                const lowerInput = document.createElement('input');
+                lowerInput.type = 'text';
+                lowerInput.className = 'variable-input';
+                lowerInput.id = `lower_${i}`;
+                lowerInput.value = '0';
+                lowerInput.placeholder = '-inf';
+                row.appendChild(lowerInput);
+
+                const leq1 = document.createElement('span');
+                leq1.textContent = ' ≤ ';
+                row.appendChild(leq1);
+
+                const label = document.createElement('span');
+                label.className = 'variable-label';
+                label.textContent = `x${i + 1}`;
+                row.appendChild(label);
+
+                const leq2 = document.createElement('span');
+                leq2.textContent = ' ≤ ';
+                row.appendChild(leq2);
+
+                const upperInput = document.createElement('input');
+                upperInput.type = 'text';
+                upperInput.className = 'variable-input';
+                upperInput.id = `upper_${i}`;
+                upperInput.value = 'inf';
+                upperInput.placeholder = 'inf';
+                row.appendChild(upperInput);
+
+                if (i < numVars - 1) {
+                    const separator = document.createElement('span');
+                    separator.textContent = ' | ';
+                    separator.style.margin = '0 15px';
+                    row.appendChild(separator);
+                }
+            }
+
+            container.appendChild(row);
+        }
+
+        function simplex(ind, c, A, b) {
+            const m = A.length;
+            const n = A[0].length;
+
+            // Create initial tableau
+            const tableau = [];
+            for (let i = 0; i < m; i++) {
+                tableau[i] = [...A[i], ...new Array(m + 1).fill(0), b[i]];
+                tableau[i][n + i] = 1; // slack variable
+            }
+            tableau.push([...c, ...new Array(m + 2).fill(0)]);
+
+            const basicVariIndex = [];
+            for (let i = 0; i < m; i++) {
+                basicVariIndex.push(n + i + 1);
+            }
+
+            let iterations = 0;
+            const maxIterations = 100;
+
+            while (iterations < maxIterations) {
+                // Check optimality
+                let minCoeff = 0;
+                let pivotCol = -1;
+                for (let j = 0; j < tableau[m].length - 1; j++) {
+                    if (tableau[m][j] < minCoeff) {
+                        minCoeff = tableau[m][j];
+                        pivotCol = j;
+                    }
+                }
+
+                if (pivotCol === -1) break; // Optimal solution found
+
+                // Find pivot row using minimum ratio test
+                let ratios = [];
+                for (let i = 0; i < m; i++) {
+                    if (tableau[i][pivotCol] > 0) {
+                        ratios.push({
+                            ratio: tableau[i][tableau[i].length - 1] / tableau[i][pivotCol],
+                            row: i
+                        });
+                    }
+                }
+
+                if (ratios.length === 0) {
+                    return { status: 'unbounded', solution: null, objective: null };
+                }
+
+                ratios.sort((a, b) => a.ratio - b.ratio);
+                const pivotRow = ratios[0].row;
+                const pivotElement = tableau[pivotRow][pivotCol];
+
+                // Normalize pivot row
+                for (let j = 0; j < tableau[pivotRow].length; j++) {
+                    tableau[pivotRow][j] /= pivotElement;
+                }
+
+                // Update basic variable index
+                basicVariIndex[pivotRow] = pivotCol + 1;
+
+                // Eliminate other rows
+                for (let i = 0; i < tableau.length; i++) {
+                    if (i !== pivotRow) {
+                        const ratio = tableau[i][pivotCol];
+                        for (let j = 0; j < tableau[i].length; j++) {
+                            tableau[i][j] -= ratio * tableau[pivotRow][j];
+                        }
+                    }
+                }
+
+                iterations++;
+            }
+
+            if (iterations >= maxIterations) {
+                return { status: 'max_iterations', solution: null, objective: null };
+            }
+
+            // Extract solution
+            const solution = new Array(n).fill(0);
+            for (let i = 0; i < m; i++) {
+                const varIndex = basicVariIndex[i] - 1;
+                if (varIndex < n) {
+                    solution[varIndex] = tableau[i][tableau[i].length - 1];
+                }
+            }
+
+            const objective = ind * tableau[m][tableau[m].length - 1];
+
+            // Verify feasibility
+            for (let i = 0; i < A.length; i++) {
+                let lhs = 0;
+                for (let j = 0; j < n; j++) {
+                    lhs += A[i][j] * solution[j];
+                }
+                if (lhs - b[i] > 1e-8) {
+                    return { status: 'infeasible', solution: null, objective: null };
+                }
+            }
+
+            return { status: 'optimal', solution: solution, objective: objective };
+        }
+
+        function solveProblem() {
+            try {
+                // Get objective coefficients
+                const c = [];
+                for (let i = 0; i < numVars; i++) {
+                    c.push(parseFloat(document.getElementById(`obj_${i}`).value) || 0);
+                }
+
+                // Get constraint matrix and RHS
+                const A = [];
+                const b = [];
+                for (let i = 0; i < numConstraints; i++) {
+                    const row = [];
+                    for (let j = 0; j < numVars; j++) {
+                        row.push(parseFloat(document.getElementById(`con_${i}_${j}`).value) || 0);
+                    }
+                    A.push(row);
+                    b.push(parseFloat(document.getElementById(`rhs_${i}`).value) || 0);
+                }
+
+                // Handle objective type
+                let ind = 1;
+                if (document.getElementById('objective').value === 'max') {
+                    for (let i = 0; i < c.length; i++) {
+                        c[i] = -c[i];
+                    }
+                } else {
+                    ind = -1;
+                }
+
+                // Add bounds as constraints
+                for (let j = 0; j < numVars; j++) {
+                    const lowerStr = document.getElementById(`lower_${j}`).value;
+                    const upperStr = document.getElementById(`upper_${j}`).value;
+
+                    // Lower bound constraint: -x_j <= -lower
+                    if (lowerStr && lowerStr !== '-inf' && lowerStr !== 'inf') {
+                        const lower = parseFloat(lowerStr);
+                        if (!isNaN(lower)) {
+                            const row = new Array(numVars).fill(0);
+                            row[j] = -1;
+                            A.push(row);
+                            b.push(-lower);
+                        }
+                    }
+
+                    // Upper bound constraint: x_j <= upper
+                    if (upperStr && upperStr !== 'inf' && upperStr !== '-inf') {
+                        const upper = parseFloat(upperStr);
+                        if (!isNaN(upper)) {
+                            const row = new Array(numVars).fill(0);
+                            row[j] = 1;
+                            A.push(row);
+                            b.push(upper);
+                        }
+                    }
+                }
+
+                const result = simplex(ind, c, A, b);
+                displayResults(result, A, b, c);
+
+            } catch (error) {
+                displayError('Error solving the problem: ' + error.message);
+            }
+        }
+
+        function displayResults(result, A, b, c) {
+            const resultContent = document.getElementById('resultContent');
+            resultContent.innerHTML = '';
+
+            if (result.status === 'optimal') {
+                resultContent.innerHTML = `
+                    <div class="success">
+                        <strong>✓ Optimal Solution Found!</strong>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Optimal Solution (x):</div>
+                        <div class="result-value">[${result.solution.map(x => x.toFixed(6)).join(', ')}]</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Optimal Objective Value:</div>
+                        <div class="result-value">${result.objective.toFixed(6)}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Objective Coefficients (c):</div>
+                        <div class="result-value">[${c.map(x => x.toFixed(6)).join(', ')}]</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Constraint Matrix (A):</div>
+                        <div class="result-value">${A.map(row => '[' + row.map(x => x.toFixed(6)).join(', ') + ']').join('<br>')}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Right-hand Side Vector (b):</div>
+                        <div class="result-value">[${b.map(x => x.toFixed(6)).join(', ')}]</div>
+                    </div>
+                `;
+            } else {
+                let message = '';
+                switch (result.status) {
+                    case 'infeasible':
+                        message = '❌ No feasible solution exists for this problem.';
+                        break;
+                    case 'unbounded':
+                        message = '🔄 The problem is unbounded (objective can be improved indefinitely).';
+                        break;
+                    case 'max_iterations':
+                        message = '⏱️ Maximum iterations reached. The problem may be degenerate.';
+                        break;
+                    default:
+                        message = '❓ Unknown error occurred.';
+                }
+                resultContent.innerHTML = `<div class="error"><strong>${message}</strong></div>`;
+            }
+
+            document.getElementById('resultSection').style.display = 'block';
+        }
+
+        function displayError(message) {
+            const resultContent = document.getElementById('resultContent');
+            resultContent.innerHTML = `<div class="error"><strong>${message}</strong></div>`;
+            document.getElementById('resultSection').style.display = 'block';
+        }
+
+        // Initialize with default problem
+        window.onload = function() {
+            generateInputs();
+
+            // Set up example problem
+            document.getElementById('obj_0').value = '3';
+            document.getElementById('obj_1').value = '5';
+            document.getElementById('con_0_0').value = '1';
+            document.getElementById('con_0_1').value = '0';
+            document.getElementById('rhs_0').value = '4';
+            document.getElementById('con_1_0').value = '0';
+            document.getElementById('con_1_1').value = '2';
+            document.getElementById('rhs_1').value = '12';
+            document.getElementById('con_2_0').value = '3';
+            document.getElementById('con_2_1').value = '2';
+            document.getElementById('rhs_2').value = '18';
+        };
+    </script>
+</body>
+</html>
