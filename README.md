@@ -4,10 +4,11 @@ A linear programming solver GUI using the simplex method.
 
 ## Overview
 
-This project provides two implementations of the simplex method for solving linear programming problems:
+This project provides three implementations of the simplex method for solving linear programming problems:
 
-- **simplex.py**: Simplex method in python without imports
-- **JMTS_2403A_C01.py**: A GUI application with interactive problem definition
+- **simplex.py**: Simplex method in python without external imports
+- **JMTS_2403_C01.py**: A GUI application with interactive problem definition
+- **Webpage**: 
 
 ## ✨ Features
 
@@ -21,15 +22,25 @@ This project provides two implementations of the simplex method for solving line
 - Interactive constraint and objective function input
 - Variable bounds specification
 
+### Webpage Features
+- Interactive tableau visualization
+- Step-by-step solution process display
+- No installation required - runs directly in browser
 
 ## Installation
 
-No external dependencies required for the core simplex implementation. For the GUI version:
+No external dependencies required for the core simplex implementation. 
+
+For the GUI version:
 
 ```bash
 # The GUI version uses tkinter, which comes with Python by default
 python --version  # Ensure Python 3.x is installed
 ```
+
+For the web version:
+
+No installation required. Simply open the link.
 
 ## 🔐 Usage
 
@@ -51,7 +62,7 @@ Run:
 python simplex.py
 ```
 
-### GUI Version 01 (JMTS_2403_C01.py)
+### GUI Version 01 (JMTS_2403_C01.py/web version)
 
 Launch the interactive interface:
 ```bash
@@ -112,8 +123,10 @@ lⱼ ≤ xⱼ ≤ uⱼ for j = 1, 2, ..., n
 
 ```
 ├── simplex.py              # Core simplex implementation
-├── JMTS_2403_C01.py      # GUI application
-└── README.md              # This documentation
+├── JMTS_2403_C01.py        # GUI application
+├── docs/                   # Web version files
+│   └── index.html          # Main web interface
+└── README.md               # This documentation
 ```
 
 ## Example Output
@@ -133,6 +146,14 @@ The GUI provides a final results display including:
 - Coefficients of the objective function
 - Constraint matrix representation
 
+## Platform Comparison
+| Feature | Command Line | Desktop GUI | Web Version |
+|---------|-------------|-------------|-------------|
+| Installation Required | Python | Python + tkinter | None |
+| User Interface | Text-based | Native GUI | Modern web UI |
+| Mobile Support | No | No | Yes |
+
+
 ## Technical Notes
 
 - **Numerical Precision**: Uses floating-point arithmetic with tolerance checking
@@ -149,6 +170,8 @@ Subsequent improvements, bug fixes, or additional features are expected.
 
 This package is released under the MIT License.
 
-## ✏️ Author
+## ✏️ Author & Acknowledgments
 
 Created by [@Yunqing-Jia](https://github.com/Yunqing-Jia) as the JMTS_2403 project.
+
+**Special thanks** to the textbook *Introduction to Operations Research* (Ninth Edition) by **Frederick S. Hillier** and **Gerald J. Lieberman**.
