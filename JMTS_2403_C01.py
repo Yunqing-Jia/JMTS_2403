@@ -152,7 +152,7 @@ def on_define():
     middle_frame = tk.Frame(root)
     middle_frame.pack(side='bottom', fill='x', pady=10, padx=10)
 
-    img = PhotoImage(file='J-MTS.png')
+    img = PhotoImage(file='docs/J-MTS.png')
     img_label = tk.Label(middle_frame, image=img)
     img_label.image = img
     img_label.pack(side='left')
